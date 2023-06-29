@@ -13,7 +13,7 @@ public class ZoomScript : MonoBehaviour
 
     public KMSelectable[] buttons;
 
-    private string[] modulenames = { "101 Dalmatians", "3D Tunnels", "Accumulation", "Adventure Game", "Alphabet", "Bases", "Binary Puzzle", "Blackjack", "Boggle", "British Slang", "Calendar", "Chord Qualities", "Color Decoding", "Color Morse", "Combination Lock", "Countdown", "Cruel Countdown", "Determinants", "Digital Root", "Dragon Energy", "Encrypted Morse", "English Test", "Extended Password", "Filibuster", "Follow the Leader", "Functions", "Graffiti Numbers", "Grid Matching", "Guitar Chords", "Hieroglyphics", "Hot Potato", "Hunting", "IKEA", "Instructions", "Jack Attack", "Know Your Way", "Kudosudoku", "Lasers", "LED Grid", "Lightspeed", "Logic Gates", "Maintenance", "Mashematics", "Mineseeker", "Module Homework" };
+    private string[] modulenames = { "101 Dalmatians", "3D Tunnels", "Accumulation", "Adventure Game", "Alphabet", "Bases", "Binary Puzzle", "Blackjack", "Boggle", "British Slang", "Calendar", "Chord Qualities", "Color Decoding", "Color Morse", "Combination Lock", "Countdown", "Cruel Countdown", "Determinants", "Digital Root", "Dragon Energy", "Encrypted Morse", "English Test", "Extended Password", "Filibuster", "Follow the Leader", "Functions", "Graffiti Numbers", "Grid Matching", "Guitar Chords", "Hieroglyphics", "Hot Potato", "Hunting", "IKEA", "Instructions", "Jack Attack", "Know Your Way", "Kudosudoku", "Lasers", "LED Grid", "Lightspeed", "Logic Gates", "Maintenance", "Mashematics", "Mineseeker", "Module Homework", "Neutralization", "Nonogram", "Number Pad", "Odd One Out", "Only Connect", "Orientation Cube", "Painting", "Party Time", "Perspective Pegs", "Piano Keys", "Playfair Cipher", "Polyhedral Maze", "Probing", "QR Code", "Quintuples", "Radiator", "Random Number Generator", "Regular Crazy Talk", "Rhythms", "Rotary Phone", "Rubik’s Cube", "Schlag den Bomb", "Sea Shells", "Semaphore", "Seven Deadly Sins", "Shape Shift", "Simon Screams", "Simon’s Sequence", "Souvenir", "Subways", "Tasha Squeals", "Tennis", "Text Field", "Third Base", "Turn The Key", "Turn The Keys", "Two Bits", "Unfair Cipher", "Unrelated Anagrams", "USA Maze", "Valves", "Vexillology", "Visual Impairment", "Waste Management", "Web Design", "Who’s That Monsplode?", "Wire Placement", "Wire Spaghetti", "Word Search", "X01", "X-Ray", "Yahtzee", "Zoni", "Zoo" };
     private int current;
     private string answer;
     public TextMesh moddisp;
@@ -22,8 +22,10 @@ public class ZoomScript : MonoBehaviour
     private Coroutine timeco;
     private float timef;
 
-    public Material[] pictures;
+    public Texture[] pictures;
+    public Material zoommat;
     public Renderer zoompic;
+    private Material pzoommat;
     private Coroutine zoomrunning;
     private bool zoomisrun;
 
@@ -43,6 +45,8 @@ public class ZoomScript : MonoBehaviour
             pressed.OnInteract += delegate () { PressButton(pressed); return false; };
             pressed.OnInteractEnded += delegate () { ReleaseButton(pressed); };
         }
+        pzoommat = new Material(zoommat);
+        zoompic.material = pzoommat;
     }
 
     void Start()
@@ -91,8 +95,8 @@ public class ZoomScript : MonoBehaviour
                     if (moddisp.text.Equals(answer))
                     {
                         Debug.LogFormat("[Zoom #{0}] Correct answer submitted! Module Disarmed!", moduleId);
-                        zoompic.material.SetTextureScale("_MainTex", new Vector2(1f, 1f));
-                        zoompic.material.SetTextureOffset("_MainTex", new Vector2(0f, 0f));
+                        pzoommat.SetTextureScale("_MainTex", new Vector2(1f, 1f));
+                        pzoommat.SetTextureOffset("_MainTex", new Vector2(0f, 0f));
                         moduleSolved = true;
                         GetComponent<KMBombModule>().HandlePass();
                     }
@@ -118,6 +122,12 @@ public class ZoomScript : MonoBehaviour
                     moddisp.text = modulenames[current - 1];
                     current--;
                 }
+                if (moddisp.text == "Random Number Generator")
+                    moddisp.transform.localScale = new Vector3(.000008f, .00001f, .00001f);
+                else if (moddisp.text == "Who’s That Monsplode?")
+                    moddisp.transform.localScale = new Vector3(.000009f, .00001f, .00001f);
+                else
+                    moddisp.transform.localScale = new Vector3(.00001f, .00001f, .00001f);
                 timeco = StartCoroutine(time(pressed));
             }
             else if (pressed == buttons[1] && started == true && modulenames.Contains(moddisp.text))
@@ -134,6 +144,12 @@ public class ZoomScript : MonoBehaviour
                     moddisp.text = modulenames[current + 1];
                     current++;
                 }
+                if (moddisp.text == "Random Number Generator")
+                    moddisp.transform.localScale = new Vector3(.000008f, .00001f, .00001f);
+                else if (moddisp.text == "Who’s That Monsplode?")
+                    moddisp.transform.localScale = new Vector3(.000009f, .00001f, .00001f);
+                else
+                    moddisp.transform.localScale = new Vector3(.00001f, .00001f, .00001f);
                 timeco = StartCoroutine(time(pressed));
             }
         }
@@ -152,9 +168,9 @@ public class ZoomScript : MonoBehaviour
     {
         int rand = UnityEngine.Random.Range(0, modulenames.Length);
         answer = modulenames[rand];
-        zoompic.material = pictures[rand];
-        zoompic.material.SetTextureScale("_MainTex", new Vector2(0.1f, 0.1f));
-        zoompic.material.SetTextureOffset("_MainTex", new Vector2(0.5f, 0.5f));
+        pzoommat.mainTexture = pictures[rand];
+        pzoommat.SetTextureScale("_MainTex", new Vector2(0.1f, 0.1f));
+        pzoommat.SetTextureOffset("_MainTex", new Vector2(UnityEngine.Random.Range(0f, 0.9f), UnityEngine.Random.Range(0f, 0.9f)));
         timer.localPosition = new Vector3(-0.0651f, 0.01f, -0.0485f);
         timer.localScale = new Vector3(0, 0.0001f, 0.0015f);
         Debug.LogFormat("[Zoom #{0}] The displayed picture is the module '{1}'", moduleId, answer);
@@ -180,6 +196,12 @@ public class ZoomScript : MonoBehaviour
                         moddisp.text = modulenames[current - 1];
                         current--;
                     }
+                    if (moddisp.text == "Random Number Generator")
+                        moddisp.transform.localScale = new Vector3(.000008f, .00001f, .00001f);
+                    else if (moddisp.text == "Who’s That Monsplode?")
+                        moddisp.transform.localScale = new Vector3(.000009f, .00001f, .00001f);
+                    else
+                        moddisp.transform.localScale = new Vector3(.00001f, .00001f, .00001f);
                     yield return new WaitForSeconds(0.03f);
                 }
                 else if (buttons[1] == btn)
@@ -194,6 +216,12 @@ public class ZoomScript : MonoBehaviour
                         moddisp.text = modulenames[current + 1];
                         current++;
                     }
+                    if (moddisp.text == "Random Number Generator")
+                        moddisp.transform.localScale = new Vector3(.000008f, .00001f, .00001f);
+                    else if (moddisp.text == "Who’s That Monsplode?")
+                        moddisp.transform.localScale = new Vector3(.000009f, .00001f, .00001f);
+                    else
+                        moddisp.transform.localScale = new Vector3(.00001f, .00001f, .00001f);
                     yield return new WaitForSeconds(0.03f);
                 }
             }
@@ -219,6 +247,12 @@ public class ZoomScript : MonoBehaviour
         int rand = UnityEngine.Random.Range(0, modulenames.Length);
         current = rand;
         moddisp.text = modulenames[rand];
+        if (modulenames[rand] == "Random Number Generator")
+            moddisp.transform.localScale = new Vector3(.000008f, .00001f, .00001f);
+        else if (modulenames[rand] == "Who’s That Monsplode?")
+            moddisp.transform.localScale = new Vector3(.000009f, .00001f, .00001f);
+        else
+            moddisp.transform.localScale = new Vector3(.00001f, .00001f, .00001f);
         zoomrunning = StartCoroutine(zoomOut());
     }
 
@@ -226,28 +260,30 @@ public class ZoomScript : MonoBehaviour
     {
         zoomisrun = true;
         Debug.LogFormat("[Zoom #{0}] The timer has started! Submit the correct answer before the timer runs out to solve the module!", moduleId);
-        Vector2 tempscale = zoompic.material.GetTextureScale("_MainTex");
-        Vector2 tempoff = zoompic.material.GetTextureOffset("_MainTex");
+        Vector2 tempscale = pzoommat.GetTextureScale("_MainTex");
+        Vector2 tempoff = pzoommat.GetTextureOffset("_MainTex");
+        float reduceAmtX = tempoff.x / (.9f / 0.00085f);
+        float reduceAmtY = tempoff.y / (.9f / 0.00085f);
         while (tempscale.x < 1.0f && tempscale.y < 1.0f)
         {
             timer.localPosition += new Vector3(0.000061f, 0f, 0f);
             timer.localScale += new Vector3(0.000122f, 0f, 0f);
-            tempscale = zoompic.material.GetTextureScale("_MainTex");
-            tempoff = zoompic.material.GetTextureOffset("_MainTex");
+            tempscale = pzoommat.GetTextureScale("_MainTex");
+            tempoff = pzoommat.GetTextureOffset("_MainTex");
             tempscale.x = tempscale.x + 0.00085f;
             tempscale.y = tempscale.y + 0.00085f;
             if (tempoff.x > 0f)
             {
-                tempoff.x = tempoff.x - 0.00047f;
-                tempoff.y = tempoff.y - 0.00047f;
+                tempoff.x = tempoff.x - reduceAmtX;
+                tempoff.y = tempoff.y - reduceAmtY;
             }
             else
             {
                 tempoff.x = 0;
                 tempoff.y = 0;
             }
-            zoompic.material.SetTextureScale("_MainTex", tempscale);
-            zoompic.material.SetTextureOffset("_MainTex", tempoff);
+            pzoommat.SetTextureScale("_MainTex", tempscale);
+            pzoommat.SetTextureOffset("_MainTex", tempoff);
             yield return new WaitForSeconds(0.01f);
         }
         zoomisrun = false;
@@ -262,56 +298,70 @@ public class ZoomScript : MonoBehaviour
 
     IEnumerator ProcessTwitchCommand(string command)
     {
-        if (Regex.IsMatch(command, @"^\s*start\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) && started == false)
+        if (Regex.IsMatch(command, @"^\s*start\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
             yield return null;
-            buttons[2].OnInteract();
+            if (started)
+            {
+                yield return "sendtochaterror The module has already been started!";
+            }
+            else
+            {
+                buttons[2].OnInteract();
+            }
             yield break;
         }
         string[] parameters = command.Split(' ');
-        if (Regex.IsMatch(parameters[0], @"^\s*submit\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) && started == true)
+        if (Regex.IsMatch(parameters[0], @"^\s*submit\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
             if (parameters.Length > 1)
             {
                 yield return null;
-                string mod = command.Substring(7);
-                List<string> modnames = modulenames.ToList();
-                for (int i = 0; i < modnames.Count; i++)
+                if (!started)
                 {
-                    modnames[i] = modnames[i].ToLower();
-                }
-                mod = mod.ToLower();
-                if (modnames.Contains(mod))
-                {
-                    if (!moddisp.text.EqualsIgnoreCase(mod))
-                    {
-                        int diff = modnames.IndexOf(mod) - current;
-                        Debug.Log(diff);
-                        if (Math.Abs(diff) > modnames.Count / 2)
-                        {
-                            diff = Math.Abs(diff) - modnames.Count;
-
-                            if (modnames.IndexOf(mod) < current)
-                                diff = -diff;
-                        }
-                        if (diff > 0)
-                        {
-                            buttons[1].OnInteract();
-                            while (!moddisp.text.EqualsIgnoreCase(mod)) yield return null;
-                            buttons[1].OnInteractEnded();
-                        }
-                        else
-                        {
-                            buttons[0].OnInteract();
-                            while (!moddisp.text.EqualsIgnoreCase(mod)) yield return null;
-                            buttons[0].OnInteractEnded();
-                        }
-                    }
-                    buttons[2].OnInteract();
+                    yield return "sendtochaterror The module must be started first!";
                 }
                 else
                 {
-                    yield return "sendtochaterror!f I couldn't find '" + command.Substring(7) + "' in my module directory!";
+                    string mod = command.Substring(7);
+                    List<string> modnames = modulenames.ToList();
+                    for (int i = 0; i < modnames.Count; i++)
+                    {
+                        modnames[i] = modnames[i].ToLower();
+                    }
+                    mod = mod.ToLower().Replace("'", "’");
+                    if (modnames.Contains(mod))
+                    {
+                        if (!moddisp.text.EqualsIgnoreCase(mod))
+                        {
+                            int diff = modnames.IndexOf(mod) - current;
+                            if (Math.Abs(diff) > modnames.Count / 2)
+                            {
+                                diff = Math.Abs(diff) - modnames.Count;
+
+                                if (modnames.IndexOf(mod) < current)
+                                    diff = -diff;
+                            }
+                            if (diff > 0)
+                            {
+                                buttons[1].OnInteract();
+                                while (!moddisp.text.EqualsIgnoreCase(mod)) yield return null;
+                                buttons[1].OnInteractEnded();
+                            }
+                            else
+                            {
+                                buttons[0].OnInteract();
+                                while (!moddisp.text.EqualsIgnoreCase(mod)) yield return null;
+                                buttons[0].OnInteractEnded();
+                            }
+                            yield return new WaitForSeconds(.1f);
+                        }
+                        buttons[2].OnInteract();
+                    }
+                    else
+                    {
+                        yield return "sendtochaterror!f I couldn't find '" + command.Substring(7) + "' in my module directory!";
+                    }
                 }
             }
         }

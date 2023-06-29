@@ -14,7 +14,8 @@ MonoBehaviour:
   id: zoomModule
   title: Zoom
   author: eXish
-  description: 'A template module
+  description: 'Identify the module on a zoomed in image and submit it before the
+    timer runs out.
 
 
     HTML: https://ktane.timwi.de/HTML/Zoom.html
@@ -29,4 +30,4 @@ MonoBehaviour:
     Twitch Plays supported'
   version: 1.0.0
   outputFolder: build
-  previewImage: {fileID: 2800000, guid: c0b2ae231f11b024fafeeeb9603aa510, type: 3}
+  previewImage: {fileID: 2800000, guid: f2aaf0f2bf90f5e4fb0f24b567b02b7c, type: 3}
