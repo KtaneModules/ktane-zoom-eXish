@@ -75,6 +75,12 @@ public class ZoomScript : MonoBehaviour
                 {
                     pressed.AddInteractionPunch(0.5f);
                     audio.PlaySoundAtTransform("tick", pressed.transform);
+                    if (timeco != null)
+                    {
+                        timef = 0f;
+                        StopCoroutine(timeco);
+                        timeco = null;
+                    }
                     if (moddisp.text.Equals(answer))
                     {
                         Debug.LogFormat("[Zoom #{0}] Correct answer submitted! Module resetting without penalty...", moduleId);
@@ -91,6 +97,12 @@ public class ZoomScript : MonoBehaviour
                 {
                     pressed.AddInteractionPunch(0.5f);
                     audio.PlaySoundAtTransform("tick", pressed.transform);
+                    if (timeco != null)
+                    {
+                        timef = 0f;
+                        StopCoroutine(timeco);
+                        timeco = null;
+                    }
                     StopCoroutine(zoomrunning);
                     if (moddisp.text.Equals(answer))
                     {
@@ -108,7 +120,7 @@ public class ZoomScript : MonoBehaviour
                     }
                 }
             }
-            else if (pressed == buttons[0] && started == true && modulenames.Contains(moddisp.text))
+            else if (pressed == buttons[0] && started == true && timeco == null && modulenames.Contains(moddisp.text))
             {
                 pressed.AddInteractionPunch(0.25f);
                 audio.PlaySoundAtTransform("tick", pressed.transform);
@@ -130,7 +142,7 @@ public class ZoomScript : MonoBehaviour
                     moddisp.transform.localScale = new Vector3(.00001f, .00001f, .00001f);
                 timeco = StartCoroutine(time(pressed));
             }
-            else if (pressed == buttons[1] && started == true && modulenames.Contains(moddisp.text))
+            else if (pressed == buttons[1] && started == true && timeco == null && modulenames.Contains(moddisp.text))
             {
                 pressed.AddInteractionPunch(0.25f);
                 audio.PlaySoundAtTransform("tick", pressed.transform);
@@ -161,6 +173,7 @@ public class ZoomScript : MonoBehaviour
         {
             timef = 0f;
             StopCoroutine(timeco);
+            timeco = null;
         }
     }
 
