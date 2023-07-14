@@ -345,6 +345,7 @@ public class ZoomScript : MonoBehaviour
                     mod = mod.ToLower().Replace("'", "’");
                     if (modnames.Contains(mod))
                     {
+                        while (!modulenames.Contains(moddisp.text)) { yield return null; }
                         if (!moddisp.text.EqualsIgnoreCase(mod))
                         {
                             int diff = modnames.IndexOf(mod) - current;
